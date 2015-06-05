@@ -1,0 +1,86 @@
+;Copyright [2015] [Elikosoft]
+;
+;Licensed under the Apache License, Version 2.0 (the "License");
+;you may not use this file except in compliance with the License.
+;You may obtain a copy of the License at
+;
+;    http://www.apache.org/licenses/LICENSE-2.0
+
+;Unless required by applicable law or agreed to in writing, software
+;distributed under the License is distributed on an "AS IS" BASIS,
+;WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;See the License for the specific language governing permissions and
+;limitations under the License.
+
+
+; Written by: Petar Petrovski petar@elikosoft.com.mk
+; Based on Ryan Lanes Arduino Uno driver for Win 8.1  http://www.ryanlane.com/2013/11/getting-an-ardunio-uno-working-with-windows-8-1-apps/
+
+;
+;
+; Installs WinUsb
+;
+
+[Version]
+Signature = "$Windows NT$"
+Class     = USBDevice
+ClassGUID = {88BAE032-5A81-49f0-BC3D-A4FF138216D6}
+Provider  = %ManufacturerName%
+CatalogFile = WinUSBInstallation.cat
+DriverVer=01/06/2015,1.0.0.0
+
+; ========== Manufacturer/Models sections ===========
+
+[Manufacturer]
+%ManufacturerName% = Standard,NTamd64, NT
+
+[Standard.NTamd64]
+%DeviceName% =USB_Install, USB\VID_1FFB&PID_2300
+
+[Standard.NT]
+%DeviceName% =USB_Install, USB\VID_1FFB&PID_2300
+
+; ========== Class definition ===========
+
+[ClassInstall32]
+AddReg = ClassInstall_AddReg
+
+[ClassInstall_AddReg]
+HKR,,,,%ClassName%
+HKR,,NoInstallClass,,1
+HKR,,IconPath,%REG_MULTI_SZ%,"%systemroot%\system32\setupapi.dll,-20"
+HKR,,LowerLogoVersion,,5.2
+
+; =================== Installation ===================
+
+[USB_Install]
+Include = winusb.inf
+Needs   = WINUSB.NT
+
+[USB_Install.Services]
+Include =winusb.inf
+Needs   = WINUSB.NT.Services
+
+[USB_Install.HW]
+AddReg=Dev_AddReg
+
+[Dev_AddReg]
+HKR,,DeviceInterfaceGUIDs,0x10000,"{7892a772-3cac-4440-adcb-cc3e16f79f6d}"
+
+[DestinationDirs]
+; If your INF needs to copy files, you must not use the DefaultDestDir directive here.  
+
+; ================= Source Media Section =====================
+
+[SourceDisksNames]
+1 = %DiskName%
+
+[SourceDisksFiles]
+WinUsbCoInstaller2.dll=1
+WdfCoInstaller01011.dll=
+
+[Strings]
+ManufacturerName="Pololu"
+ClassName="Universal Serial Bus devices"
+DeviceName="Pololu A-Star 32U4"
+REG_MULTI_SZ = 0x00010000
